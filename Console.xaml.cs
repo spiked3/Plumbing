@@ -92,14 +92,14 @@ namespace spiked3
                 if (ListBox == null)
                     return;
 
-                int CatagoryLevel;
-
-                if (int.TryParse(category, out CatagoryLevel))  //if a numeric was specified
-                    if (CatagoryLevel > Console.MessageLevel)
-                        return;
-
                 ListBox.Dispatcher.Invoke(() =>
                 {
+                    int CatagoryLevel;
+
+                    if (int.TryParse(category, out CatagoryLevel))  //if a numeric was specified
+                        if (CatagoryLevel > Console.MessageLevel)
+                            return;
+
                     // +++ add timestamp and level to msg like 12:22.78 Warning: xyz is being bad
                     TextBlock t = new TextBlock();
                     t.Text = message;
