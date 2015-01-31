@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace spiked3
 {
@@ -21,25 +13,58 @@ namespace spiked3
     // warn is yellow
     // error is red
     // level 1-4 detail level of debugging messages, 4 being lowest
+
     public partial class Console : UserControl
     {
-        static ListBox myListbox;
+        #region INotifyPropertyChanged
 
-        static public int MessageLevel { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] String T = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(T));
+        }
+
+        #endregion INotifyPropertyChanged
+
+        private static Console _thisInstance;
+
+        static public int MessageLevel
+        {
+            get { return (int)_thisInstance.GetValue(MessageLevelProperty); }
+            set { _thisInstance.SetValue(MessageLevelProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageLevelProperty =
+            DependencyProperty.Register("MessageLevel", typeof(int), typeof(Console), new PropertyMetadata(1));
+
+        //public int MessageLevel { get { return _thisInstance._MessageLevel; } set { _thisInstance._MessageLevel = value; _thisInstance.OnPropertyChanged(); } }
+        //int _MessageLevel = 1;
 
         public Console()
         {
+            _thisInstance = this;
             InitializeComponent();
-            myListbox = listBox1;
-            new TraceDecorator(myListbox);
+            new TraceDecorator(consoleListBox);
         }
 
-        public static void Clear()
+        void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            myListbox.Items.Clear();
+            MessageLevel = (int)e.NewValue;
         }
 
-        public static void Test()
+        void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            Clear();
+        }
+
+        public void Clear()
+        {
+            consoleListBox.Items.Clear();
+        }
+
+        public void Test()
         {
             Trace.WriteLine("Test_Click");
             Trace.WriteLine("test +", "+");
@@ -52,9 +77,10 @@ namespace spiked3
             Trace.WriteLine("test 5", "5");
         }
 
-        class TraceDecorator : TraceListener
+        private class TraceDecorator : TraceListener
         {
-            ListBox ListBox;
+            private ListBox ListBox;
+
             public TraceDecorator(ListBox listBox)
             {
                 ListBox = listBox;
@@ -69,7 +95,7 @@ namespace spiked3
                 int CatagoryLevel;
 
                 if (int.TryParse(category, out CatagoryLevel))  //if a numeric was specified
-                    if (CatagoryLevel > MessageLevel)
+                    if (CatagoryLevel > Console.MessageLevel)
                         return;
 
                 ListBox.Dispatcher.Invoke(() =>
@@ -101,7 +127,6 @@ namespace spiked3
             {
                 throw new NotImplementedException();
             }
-
         }
     }
 }
