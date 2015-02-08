@@ -81,6 +81,11 @@ namespace spiked3
             d.Invoke(DispatcherPriority.Background, new Action(delegate { }));
         }
 
+        public static byte[] ToBytes(this string s)
+        {
+            return Encoding.UTF8.GetBytes(s);
+        }
+
         public static T TryFindParent<T>(this DependencyObject child)
             where T : DependencyObject
         {
