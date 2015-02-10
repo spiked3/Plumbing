@@ -143,6 +143,11 @@ namespace spiked3
             return deg * d2r;
         }
 
+        public static double inRadians(this int deg)
+        {
+            return deg * d2r;
+        }
+
         public static double inDegrees(this double rad)
         {
             return rad * r2d;
