@@ -13,6 +13,27 @@ namespace spiked3
 {
     public static class extensions
     {
+        /* test case
+        byte[] b = new byte[] { 0x61,0x62,0x63};
+        uint crc = spiked3.extensions.CRC8(b, 3); // sb 0x5f
+        */
+        public static ushort CRC8(byte[] p, int len)
+        {
+            int idx = 0;
+            uint crc = 0;
+            for (int j = len; j != 0; j--, idx++)
+            {
+                crc ^= (uint)(p[idx] << 8);
+                for (int i = 8; i != 0; i--)
+                {
+                    if ((crc & (uint)0x8000) != 0)
+                        crc ^= (0x1070 << 3);
+                    crc <<= 1;
+                }
+            }
+            return (ushort)(crc >> 8);
+        }
+
         // from http://www.codeproject.com/Articles/36747/Quick-and-Dirty-HexDump-of-a-Byte-Array
         public static string HexDump(byte[] bytes, int bytesPerLine = 16)
         {
