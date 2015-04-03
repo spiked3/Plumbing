@@ -97,15 +97,54 @@ namespace spiked3
             return result.ToString();
         }
 
-        public static void DoEvents(this Dispatcher d)
+        public static Color ToColor(this string t)
         {
-            d.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+            return (Color)ColorConverter.ConvertFromString(t);
+
+            /*
+            Color c;
+            if (t.StartsWith("#"))
+            {
+                byte r = Convert.ToByte(t.Substring(1, 2), 16);
+                byte g = Convert.ToByte(t.Substring(3, 2), 16);
+                byte b = Convert.ToByte(t.Substring(5, 2), 16);
+                c = Color.FromRgb(r, g, b);
+            }
+            else
+            {
+                //var x = System.Drawing.Color.FromName(t);
+                c = (Color)ColorConverter.ConvertFromString(t);
+            }
+            return c;
+             * */
+        }
+
+        public static double Map(this double x, double in_min, double in_max, double out_min, double out_max)
+        {
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        }
+
+        public static float Map(this float x, float in_min, float in_max, float out_min, float out_max)
+        {
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        }
+
+        public static int Map(this int x, int in_min, int in_max, int out_min, int out_max)
+        {
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         }
 
         public static byte[] ToBytes(this string s)
         {
             return Encoding.UTF8.GetBytes(s);
         }
+
+
+        public static void DoEvents(this Dispatcher d)
+        {
+            d.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+        }
+
 
         public static T TryFindParent<T>(this DependencyObject child)
             where T : DependencyObject
