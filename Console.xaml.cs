@@ -92,7 +92,7 @@ namespace spiked3
                 if (ListBox == null)
                     return;
 
-                ListBox.Dispatcher.Invoke(() =>
+                ListBox.Dispatcher.InvokeAsync(() =>
                 {
                     int CatagoryLevel;
 
@@ -115,7 +115,7 @@ namespace spiked3
                     var sv = ListBox.TryFindParent<ScrollViewer>();
                     if (sv != null)
                         sv.ScrollToBottom();  //  +++  not doing it
-                });
+                }, System.Windows.Threading.DispatcherPriority.Background);
             }
 
             public override void WriteLine(string message)
